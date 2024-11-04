@@ -80,7 +80,7 @@ func main() {
 
 	// Run server
 	log.Println("Running server on localhost:8080")
-	router.Run("localhost:8080")
+	router.Run("0.0.0.0:8080")
 }
 
 // Initialize a deck for the user
