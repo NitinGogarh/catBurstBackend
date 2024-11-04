@@ -15,24 +15,25 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+
 type Card struct {
 	Type  string `json:"type"`
 	Emoji string `json:"emoji"`
 }
 
+type User struct {
+	Username string `json:"username"`
+}
 // Example cards (deck)
 var cards = []Card{
 	{"Cat", "😼"},
-	{"Defuse", "🙅‍♂️"},
+	{"Defuse", "🙅‍♂"},
 	{"Shuffle", "🔀"},
 	{"Exploding Kitten", "💣"},
 }
 
 var ctx = context.Background()
 
-type User struct {
-	Username string `json:"username"`
-}
 
 var rdb *redis.Client
 var upgrader = websocket.Upgrader{
@@ -46,10 +47,18 @@ func main() {
 
 	// Setup Redis
 	rdb = redis.NewClient(&redis.Options{
-		Addr: "localhost:6379", // Redis server address
-		DB:   0,                // Use default DB
-	})
+        Addr:     "redis-13480.c16.us-east-1-3.ec2.redns.redis-cloud.com:13480", // Redis Cloud endpoint
+        Password: "tdrbW6wUfkTI6rj7YKPdzZBXNKp2KsIb", // Redis Cloud password
+        DB:       0,         // Use default DB
+    })
 	log.Println("Connected to Redis")
+
+	// Test the Redis connection
+    _, err := rdb.Ping(ctx).Result()
+    if err != nil {
+        log.Fatalf("Could not connect to Redis: %v", err)
+    }
+    log.Println("Connected to Redis Cloud")
 
 	// Setup Gin router
 	router := gin.Default()
